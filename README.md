@@ -1,2 +1,2 @@
-# Expert-Enhanced-Cardiac-Arrhythmia-Discrimination-with-Invertible-Neural-Networks
-Use an INN to simulate P(X|Y), where X are model parameters of an existing mathematical model of AV-node signal conduction and Y are EKG RR intervals.
+# Heart-Arrhythmia-Modelling-with-Invertible-Neural-Networks
+This repository contains the code for my master thesis "Heart Arrhythmia Modelling with Invertible Neural Networks". It includes the code used for data generation, model creation as well as training and testing the models. 
