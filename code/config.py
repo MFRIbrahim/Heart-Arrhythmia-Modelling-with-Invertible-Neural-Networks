@@ -1,6 +1,6 @@
 
 
-#------Model------#
+# ------Model------ #
 
 n_x_features = 352
 n_cond_features = 24
@@ -10,23 +10,17 @@ init_scale = 0.01
 
 # for cINN
 
-n_hidden_layer_size = 1024  
+n_hidden_layer_size = 1024
 
 # for rcINN
 
 rnn_layers = 2
 hidden_size = 64
 
-#------Training------#
+# ------Training------ #
 
 n_epochs = 100
 n_iterations = 200
 batch_size = 512
 lr = 0.001
 gamma = 0.95
-
-
-
-
-
-
