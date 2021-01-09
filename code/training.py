@@ -2001,7 +2001,7 @@ def get_solution_mp(intervals, network_name):
             filtered_outputs = pool.starmap(process_outputs_signals, pairs)
         for filter_pair in filtered_outputs:
             print_stats(filter_pair[0], filter_pair[1],
-                        network_name, signals=False, splitter=False)
+                        network_name, signals=True, splitter=False)
 
     if network_name == "signal_rcINN":
         outputs = get_outputs_signals_recurrent(stats)
@@ -2011,7 +2011,7 @@ def get_solution_mp(intervals, network_name):
                 process_outputs_signals_recurrent, pairs)
         for filter_pair in filtered_outputs:
             print_stats(filter_pair[0], filter_pair[1],
-                        network_name, signals=False, splitter=False)
+                        network_name, signals=True, splitter=False)
 
     if network_name == "signal_rcINN_matching":
         outputs = get_outputs_signals_recurrent_matching(stats, mp=True)
@@ -2021,7 +2021,7 @@ def get_solution_mp(intervals, network_name):
                 process_outputs_signals_recurrent_matching, pairs)
         for filter_pair in filtered_outputs:
             print_stats(filter_pair[0], filter_pair[1],
-                        network_name, signals=False, splitter=False)
+                        network_name, signals=True, splitter=False)
 
 
 def get_solution(intervals, network_name):
