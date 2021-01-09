@@ -10,7 +10,7 @@ import os
 import json
 
 from multiprocessing import Pool
-
+from pathlib import Path
 
 from mavb.forward import simulate_type_1
 from mavb.forward import simulate_type_2a
@@ -20,6 +20,9 @@ from mavb.forward import simulate_type_3
 
 import warnings
 warnings.filterwarnings('ignore')
+
+networks_folder = Path("models/")
+constants_folder = Path("constants/")
 
 
 def append_new_line(file_name, text_to_append):
@@ -826,14 +829,14 @@ def process_matching(data):
 
 def get_outputs_signals_recurrent_matching(true_stats, mp=True):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
-        cond_mean = np.loadtxt("cond_signals_mean_est.csv")
-        cond_std = np.loadtxt("cond_signals_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
+        cond_mean = np.loadtxt(constants_folder / "cond_signals_mean_est.csv")
+        cond_std = np.loadtxt(constants_folder / "cond_signals_std_est.csv")
         config.n_x_features = 5
         config.n_cond_features = 2
         config.rnn_layers = 2
@@ -845,10 +848,11 @@ def get_outputs_signals_recurrent_matching(true_stats, mp=True):
         model_seq, optim_seq, weight_scheduler_seq = Model.generate_cINN_old()
         config.n_x_features = 192
         model_matching, optim_matching, weight_scheduler_matching = Model.generate_cINN_old()
-        Model.load("model_signals_rcINN_matching.pth",
+        Model.load(networks_folder / "model_signals_rcINN_matching.pth",
                    optim_rcINN, model_rcINN)
-        Model.load("model_signals_sequence.pth", optim_seq, model_seq)
-        Model.load("model_signals_matching.pth",
+        Model.load(networks_folder / "model_signals_sequence.pth",
+                   optim_seq, model_seq)
+        Model.load(networks_folder / "model_signals_matching.pth",
                    optim_matching, model_matching)
         model_rcINN.eval()
         model_seq.eval()
@@ -1072,12 +1076,12 @@ def process_outputs_signals_recurrent_matching(big_output, true_stats):
 
 def get_outputs_signals_recurrent(true_stats):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
         config.n_x_features = 5
         config.n_cond_features = 24
         config.rnn_layers = 2
@@ -1086,8 +1090,10 @@ def get_outputs_signals_recurrent(true_stats):
         config.n_x_features = 194
         config.n_hidden_layer_size = 512
         model_seq, optim_seq, weight_scheduler_seq = Model.generate_cINN_old()
-        Model.load("model_signals_rcINN.pth", optim_rcINN, model_rcINN)
-        Model.load("model_signals_sequence.pth", optim_seq, model_seq)
+        Model.load(networks_folder / "model_signals_rcINN.pth",
+                   optim_rcINN, model_rcINN)
+        Model.load(networks_folder / "model_signals_sequence.pth",
+                   optim_seq, model_seq)
         model_rcINN.eval()
         model_seq.eval()
 
@@ -1222,17 +1228,17 @@ def process_outputs_signals_recurrent(big_output, true_stats):
 
 def get_outputs_signals(true_stats):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
         config.n_x_features = 602
         config.n_cond_features = 24
         config.n_hidden_layer_size = 1024
         model, optim, weight_scheduler = Model.generate_cINN_old()
-        Model.load("model_signals_cINN.pth", optim, model)
+        Model.load(networks_folder / "model_signals_cINN.pth", optim, model)
         model.eval()
 
         outputs = []
@@ -1436,12 +1442,18 @@ def process_outputs_splitter(data):
 
 def get_outputs_splitter(true_stats, splitter_type):
     with torch.no_grad():
-        aa_mean = np.loadtxt(f"aa_mean_splitter{splitter_type}_est.csv")
-        aa_std = np.loadtxt(f"aa_std_splitter{splitter_type}_est.csv")
-        cc_mean = np.loadtxt(f"cc_mean_splitter{splitter_type}_est.csv")
-        cc_std = np.loadtxt(f"cc_std_splitter{splitter_type}_est.csv")
-        y_mean = np.loadtxt(f"y_mean_splitter{splitter_type}_est.csv")
-        y_std = np.loadtxt(f"y_std_splitter{splitter_type}_est.csv")
+        aa_mean = np.loadtxt(constants_folder /
+                             f"aa_mean_splitter{splitter_type}_est.csv")
+        aa_std = np.loadtxt(constants_folder /
+                            f"aa_std_splitter{splitter_type}_est.csv")
+        cc_mean = np.loadtxt(constants_folder /
+                             f"cc_mean_splitter{splitter_type}_est.csv")
+        cc_std = np.loadtxt(constants_folder /
+                            f"cc_std_splitter{splitter_type}_est.csv")
+        y_mean = np.loadtxt(constants_folder /
+                            f"y_mean_splitter{splitter_type}_est.csv")
+        y_std = np.loadtxt(constants_folder /
+                           f"y_std_splitter{splitter_type}_est.csv")
         if splitter_type == "1" or splitter_type == "2a":
             config.n_x_features = 177
             config.n_hidden_layer_size = 512
@@ -1452,7 +1464,8 @@ def get_outputs_splitter(true_stats, splitter_type):
             config.n_x_features = 152
             config.n_hidden_layer_size = 512
         model, optim, weight_scheduler = Model.generate_cINN_old()
-        Model.load(f"model_splitter{splitter_type}.pth", optim, model)
+        Model.load(networks_folder /
+                   f"model_splitter{splitter_type}.pth", optim, model)
         model.eval()
 
         if splitter_type == "1" or splitter_type == "2a":
@@ -1486,17 +1499,17 @@ def get_outputs_splitter(true_stats, splitter_type):
 
 def get_outputs_bp(true_stats):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
         config.n_x_features = 1402
         config.n_cond_features = 24
         config.n_hidden_layer_size = 2048
         model, optim, weight_scheduler = Model.generate_cINN_old()
-        Model.load("model_bp_cINN.pth", optim, model)
+        Model.load(networks_folder / "model_bp_cINN.pth", optim, model)
         model.eval()
 
         outputs = []
@@ -1591,12 +1604,12 @@ def process_outputs_bp(big_output, true_stats):
 
 def get_outputs_bp_recurrent(true_stats):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
         config.n_x_features = 26
         config.n_cond_features = 24
         config.rnn_layers = 2
@@ -1605,8 +1618,10 @@ def get_outputs_bp_recurrent(true_stats):
         config.n_x_features = 188
         config.n_hidden_layer_size = 512
         model_seq, optim_seq, weight_scheduler_seq = Model.generate_cINN_old()
-        Model.load("model_bp_rcINN.pth", optim_rcINN, model_rcINN)
-        Model.load("model_bp_sequence.pth", optim_seq, model_seq)
+        Model.load(networks_folder / "model_bp_rcINN.pth",
+                   optim_rcINN, model_rcINN)
+        Model.load(networks_folder / "model_bp_sequence.pth",
+                   optim_seq, model_seq)
         model_rcINN.eval()
         model_seq.eval()
 
@@ -1707,14 +1722,14 @@ def process_outputs_bp_recurrent(outputs, true_stats):
 
 def get_outputs_bp_recurrent_matching(true_stats, mp=True):
     with torch.no_grad():
-        aa_mean = np.loadtxt("aa_mean_est.csv")
-        aa_std = np.loadtxt("aa_std_est.csv")
-        cc_mean = np.loadtxt("cc_mean_est.csv")
-        cc_std = np.loadtxt("cc_std_est.csv")
-        y_mean = np.loadtxt("y_mean_est.csv")
-        y_std = np.loadtxt("y_std_est.csv")
-        cond_mean = np.loadtxt("cond_mean_est.csv")
-        cond_std = np.loadtxt("cond_std_est.csv")
+        aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+        aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+        cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+        cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+        y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+        y_std = np.loadtxt(constants_folder / "y_std_est.csv")
+        cond_mean = np.loadtxt(constants_folder / "cond_mean_est.csv")
+        cond_std = np.loadtxt(constants_folder / "cond_std_est.csv")
         config.n_x_features = 26
         config.n_cond_features = 2
         config.rnn_layers = 2
@@ -1726,9 +1741,12 @@ def get_outputs_bp_recurrent_matching(true_stats, mp=True):
         model_seq, optim_seq, weight_scheduler_seq = Model.generate_cINN_old()
         config.n_x_features = 192
         model_matching, optim_matching, weight_scheduler_matching = Model.generate_cINN_old()
-        Model.load("model_bp_rcINN_matching.pth", optim_rcINN, model_rcINN)
-        Model.load("model_bp_sequence.pth", optim_seq, model_seq)
-        Model.load("model_bp_matching.pth", optim_matching, model_matching)
+        Model.load(networks_folder / "model_bp_rcINN_matching.pth",
+                   optim_rcINN, model_rcINN)
+        Model.load(networks_folder / "model_bp_sequence.pth",
+                   optim_seq, model_seq)
+        Model.load(networks_folder / "model_bp_matching.pth",
+                   optim_matching, model_matching)
         model_rcINN.eval()
         model_seq.eval()
         model_matching.eval()
@@ -2099,13 +2117,10 @@ def get_solution(intervals, network_name):
 
 
 def main():
-    total_intervals = []
-    for i in range(100):
-        y = datagen.get_random_y()
-        intervals = y[1][0:24]
-        total_intervals.append(intervals)
-    network_name = "bp_cINN_multi"
-    get_solution_mp(total_intervals, network_name)
+    y = datagen.get_random_y()
+    intervals = y[1][0:24]
+    network_name = "bp_rcINN_matching"
+    get_solution(intervals, network_name)
 
 
 """

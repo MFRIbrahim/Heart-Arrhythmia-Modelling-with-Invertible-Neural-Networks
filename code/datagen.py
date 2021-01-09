@@ -4,12 +4,16 @@ import torch.utils.data
 import random
 import copy
 
+from pathlib import Path
 
 from mavb.forward import simulate_type_1
 from mavb.forward import simulate_type_2a
 from mavb.forward import simulate_type_2b
 from mavb.forward import simulate_type_2c
 from mavb.forward import simulate_type_3
+
+
+constants_folder = Path("constants/")
 
 
 def block_pattern_to_one_hot(block_pattern, length):
@@ -876,8 +880,8 @@ def get_signals_sequence_batch(batch_size, test=False, btype=0):
 
     x += 0.1 * torch.randn(x.shape[0], x.shape[1])
 
-    y_mean = np.loadtxt('y_mean_est.csv')
-    y_std = np.loadtxt('y_std_est.csv')
+    y_mean = np.loadtxt(constants_folder / 'y_mean_est.csv')
+    y_std = np.loadtxt(constants_folder / 'y_std_est.csv')
 
     if not test:
         y = (y - y_mean) / y_std
@@ -945,8 +949,8 @@ def get_signals_matching_batch(batch_size):
 
     x += 0.1 * torch.randn(x.shape[0], x.shape[1])
 
-    y_mean = np.loadtxt('y_mean_est.csv')
-    y_std = np.loadtxt('y_std_est.csv')
+    y_mean = np.loadtxt(constants_folder / 'y_mean_est.csv')
+    y_std = np.loadtxt(constants_folder / 'y_std_est.csv')
 
     y = (y - y_mean) / y_std
 
@@ -1007,12 +1011,12 @@ def get_signals_recurrent_matching_batch(batch_size):
             x_shapes.append(x_i.shape[1])
             cond.append([cond_i])
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    cond_mean = np.loadtxt("cond_signals_mean_est.csv")
-    cond_std = np.loadtxt("cond_signals_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    cond_mean = np.loadtxt(constants_folder / "cond_signals_mean_est.csv")
+    cond_std = np.loadtxt(constants_folder / "cond_signals_std_est.csv")
 
     for i in range(len(x)):
         x[i] = torch.tensor(x[i], dtype=torch.float32)
@@ -1078,12 +1082,12 @@ def get_signals_recurrent_batch(batch_size):
             x_shapes.append(x_i.shape[1])
             y.append([y_i])
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    y_mean = np.loadtxt("y_mean_est.csv")
-    y_std = np.loadtxt("y_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_est.csv")
 
     for i in range(len(x)):
         x[i] = torch.tensor(x[i], dtype=torch.float32)
@@ -1150,12 +1154,12 @@ def get_signals_batch(batch_size, test=False, btype=0):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    y_mean = np.loadtxt("y_mean_est.csv")
-    y_std = np.loadtxt("y_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_est.csv")
 
     if not test:
         y = (y - y_mean) / y_std
@@ -1252,18 +1256,21 @@ def get_approx_stats(n):
     cond_signals_std = [
         torch.std(cond_signals_array[0]), torch.std(cond_signals_array[1])]
 
-    np.savetxt("aa_mean_est.csv", np.array([aa_mean]))
-    np.savetxt("aa_std_est.csv", np.array([aa_std]))
-    np.savetxt("cc_mean_est.csv", np.array([cc_mean]))
-    np.savetxt("cc_std_est.csv", np.array([cc_std]))
-    np.savetxt("y_mean_est.csv", y_mean)
-    np.savetxt("y_std_est.csv", y_std)
-    np.savetxt("y_single_mean_est.csv", np.array([y_single_mean]))
-    np.savetxt("y_single_std_est.csv", np.array([y_single_std]))
-    np.savetxt('cond_mean_est.csv', cond_mean)
-    np.savetxt('cond_std_est.csv', cond_std)
-    np.savetxt('cond_signals_mean_est.csv', cond_signals_mean)
-    np.savetxt('cond_signals_std_est.csv', cond_signals_std)
+    np.savetxt(constants_folder / "aa_mean_est.csv", np.array([aa_mean]))
+    np.savetxt(constants_folder / "aa_std_est.csv", np.array([aa_std]))
+    np.savetxt(constants_folder / "cc_mean_est.csv", np.array([cc_mean]))
+    np.savetxt(constants_folder / "cc_std_est.csv", np.array([cc_std]))
+    np.savetxt(constants_folder / "y_mean_est.csv", y_mean)
+    np.savetxt(constants_folder / "y_std_est.csv", y_std)
+    np.savetxt(constants_folder / "y_single_mean_est.csv",
+               np.array([y_single_mean]))
+    np.savetxt(constants_folder / "y_single_std_est.csv",
+               np.array([y_single_std]))
+    np.savetxt(constants_folder / 'cond_mean_est.csv', cond_mean)
+    np.savetxt(constants_folder / 'cond_std_est.csv', cond_std)
+    np.savetxt(constants_folder /
+               'cond_signals_mean_est.csv', cond_signals_mean)
+    np.savetxt(constants_folder / 'cond_signals_std_est.csv', cond_signals_std)
 
 
 def generate_rcINN_batch_old(batch_size):
@@ -1314,12 +1321,12 @@ def generate_rcINN_batch_old(batch_size):
             x_shapes.append(x_i.shape[1])
             y.append([y_i])
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    y_mean = np.loadtxt("y_mean_est.csv")
-    y_std = np.loadtxt("y_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_est.csv")
 
     for i in range(len(x)):
         x[i] = torch.tensor(x[i], dtype=torch.float32)
@@ -1388,12 +1395,12 @@ def generate_rcINN_matching_batch_old(batch_size):
             x_shapes.append(x_i.shape[1])
             cond.append([cond_i])
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    cond_mean = np.loadtxt("cond_mean_est.csv")
-    cond_std = np.loadtxt("cond_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    cond_mean = np.loadtxt(constants_folder / "cond_mean_est.csv")
+    cond_std = np.loadtxt(constants_folder / "cond_std_est.csv")
 
     for i in range(len(x)):
         x[i] = torch.tensor(x[i], dtype=torch.float32)
@@ -1461,12 +1468,16 @@ def get_splitter_stats(n, btype):
     y_mean = torch.mean(y, axis=0)
     y_std = torch.std(y, axis=0)
 
-    np.savetxt(f"aa_mean_splitter{btype}_est.csv", np.array([aa_mean]))
-    np.savetxt(f"aa_std_splitter{btype}_est.csv", np.array([aa_std]))
-    np.savetxt(f"cc_mean_splitter{btype}_est.csv", np.array([cc_mean]))
-    np.savetxt(f"cc_std_splitter{btype}_est.csv", np.array([cc_std]))
-    np.savetxt(f"y_mean_splitter{btype}_est.csv", y_mean)
-    np.savetxt(f"y_std_splitter{btype}_est.csv", y_std)
+    np.savetxt(constants_folder /
+               f"aa_mean_splitter{btype}_est.csv", np.array([aa_mean]))
+    np.savetxt(constants_folder /
+               f"aa_std_splitter{btype}_est.csv", np.array([aa_std]))
+    np.savetxt(constants_folder /
+               f"cc_mean_splitter{btype}_est.csv", np.array([cc_mean]))
+    np.savetxt(constants_folder /
+               f"cc_std_splitter{btype}_est.csv", np.array([cc_std]))
+    np.savetxt(constants_folder / f"y_mean_splitter{btype}_est.csv", y_mean)
+    np.savetxt(constants_folder / f"y_std_splitter{btype}_est.csv", y_std)
 
 
 def get_random_y(btype=0):
@@ -1538,12 +1549,12 @@ def generate_cINN_splitter3(batch_size):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_splitter3_est.csv")
-    aa_std = np.loadtxt("aa_std_splitter3_est.csv")
-    cc_mean = np.loadtxt("cc_mean_splitter3_est.csv")
-    cc_std = np.loadtxt("cc_std_splitter3_est.csv")
-    y_mean = np.loadtxt("y_mean_splitter3_est.csv")
-    y_std = np.loadtxt("y_std_splitter3_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_splitter3_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_splitter3_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_splitter3_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_splitter3_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_splitter3_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_splitter3_est.csv")
 
     y = (y - y_mean) / y_std
     x[:, -2] = (x[:, -2] - aa_mean) / aa_std
@@ -1594,12 +1605,12 @@ def generate_cINN_splitter2c(batch_size):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_splitter2c_est.csv")
-    aa_std = np.loadtxt("aa_std_splitter2c_est.csv")
-    cc_mean = np.loadtxt("cc_mean_splitter2c_est.csv")
-    cc_std = np.loadtxt("cc_std_splitter2c_est.csv")
-    y_mean = np.loadtxt("y_mean_splitter2c_est.csv")
-    y_std = np.loadtxt("y_std_splitter2c_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_splitter2c_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_splitter2c_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_splitter2c_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_splitter2c_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_splitter2c_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_splitter2c_est.csv")
 
     y = (y - y_mean) / y_std
     x[:, -2] = (x[:, -2] - aa_mean) / aa_std
@@ -1647,12 +1658,12 @@ def generate_cINN_splitter2b(batch_size):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_splitter2b_est.csv")
-    aa_std = np.loadtxt("aa_std_splitter2b_est.csv")
-    cc_mean = np.loadtxt("cc_mean_splitter2b_est.csv")
-    cc_std = np.loadtxt("cc_std_splitter2b_est.csv")
-    y_mean = np.loadtxt("y_mean_splitter2b_est.csv")
-    y_std = np.loadtxt("y_std_splitter2b_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_splitter2b_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_splitter2b_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_splitter2b_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_splitter2b_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_splitter2b_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_splitter2b_est.csv")
 
     y = (y - y_mean) / y_std
     x[:, -2] = (x[:, -2] - aa_mean) / aa_std
@@ -1700,12 +1711,12 @@ def generate_cINN_splitter2a(batch_size):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_splitter2a_est.csv")
-    aa_std = np.loadtxt("aa_std_splitter2a_est.csv")
-    cc_mean = np.loadtxt("cc_mean_splitter2a_est.csv")
-    cc_std = np.loadtxt("cc_std_splitter2a_est.csv")
-    y_mean = np.loadtxt("y_mean_splitter2a_est.csv")
-    y_std = np.loadtxt("y_std_splitter2a_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_splitter2a_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_splitter2a_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_splitter2a_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_splitter2a_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_splitter2a_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_splitter2a_est.csv")
 
     y = (y - y_mean) / y_std
     x[:, -2] = (x[:, -2] - aa_mean) / aa_std
@@ -1753,12 +1764,12 @@ def generate_cINN_splitter1(batch_size):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_splitter1_est.csv")
-    aa_std = np.loadtxt("aa_std_splitter1_est.csv")
-    cc_mean = np.loadtxt("cc_mean_splitter1_est.csv")
-    cc_std = np.loadtxt("cc_std_splitter1_est.csv")
-    y_mean = np.loadtxt("y_mean_splitter1_est.csv")
-    y_std = np.loadtxt("y_std_splitter1_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_splitter1_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_splitter1_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_splitter1_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_splitter1_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_splitter1_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_splitter1_est.csv")
 
     y = (y - y_mean) / y_std
     x[:, -2] = (x[:, -2] - aa_mean) / aa_std
@@ -1825,12 +1836,12 @@ def generate_cINN_batch_old(batch_size, test=False, btype=0):
 
     x[:, 0:-2] += 0.1 * torch.randn(x.shape[0], x.shape[1]-2)
 
-    aa_mean = np.loadtxt("aa_mean_est.csv")
-    aa_std = np.loadtxt("aa_std_est.csv")
-    cc_mean = np.loadtxt("cc_mean_est.csv")
-    cc_std = np.loadtxt("cc_std_est.csv")
-    y_mean = np.loadtxt("y_mean_est.csv")
-    y_std = np.loadtxt("y_std_est.csv")
+    aa_mean = np.loadtxt(constants_folder / "aa_mean_est.csv")
+    aa_std = np.loadtxt(constants_folder / "aa_std_est.csv")
+    cc_mean = np.loadtxt(constants_folder / "cc_mean_est.csv")
+    cc_std = np.loadtxt(constants_folder / "cc_std_est.csv")
+    y_mean = np.loadtxt(constants_folder / "y_mean_est.csv")
+    y_std = np.loadtxt(constants_folder / "y_std_est.csv")
 
     if not test:
         y = (y - y_mean) / y_std
@@ -1892,8 +1903,8 @@ def generate_seq_batch_old(batch_size, test=False, btype=0):
 
     x += 0.1 * torch.randn(x.shape[0], x.shape[1])
 
-    y_mean = np.loadtxt('y_mean_est.csv')
-    y_std = np.loadtxt('y_std_est.csv')
+    y_mean = np.loadtxt(constants_folder / 'y_mean_est.csv')
+    y_std = np.loadtxt(constants_folder / 'y_std_est.csv')
 
     if not test:
         y = (y - y_mean) / y_std
@@ -1958,8 +1969,8 @@ def generate_matching_batch_old(batch_size):
 
     x += 0.1 * torch.randn(x.shape[0], x.shape[1])
 
-    y_mean = np.loadtxt('y_mean_est.csv')
-    y_std = np.loadtxt('y_std_est.csv')
+    y_mean = np.loadtxt(constants_folder / 'y_mean_est.csv')
+    y_std = np.loadtxt(constants_folder / 'y_std_est.csv')
 
     y = (y - y_mean) / y_std
 
