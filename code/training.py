@@ -21,6 +21,8 @@ from mavb.forward import simulate_type_3
 import warnings
 warnings.filterwarnings('ignore')
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 networks_folder = Path("models/")
 constants_folder = Path("constants/")
 
@@ -51,8 +53,8 @@ def train_splitter(model, optim):
     x, y = datagen.generate_cINN_splitter3(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -76,8 +78,8 @@ def train_signals_recurrent_matching(model, optim):
             end = config.batch_size
             for j in range(len(x[i])//config.batch_size):
                 optim.zero_grad()
-                x_i = x[i][beg:end].cuda()
-                y_i = y[i][beg:end].cuda()
+                x_i = x[i][beg:end].to(device)
+                y_i = y[i][beg:end].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -90,8 +92,8 @@ def train_signals_recurrent_matching(model, optim):
                 end += config.batch_size
             if (len(x[i])//config.batch_size) * config.batch_size != len(x[i]):
                 optim.zero_grad()
-                x_i = x[i][beg:].cuda()
-                y_i = y[i][beg:].cuda()
+                x_i = x[i][beg:].to(device)
+                y_i = y[i][beg:].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -103,8 +105,8 @@ def train_signals_recurrent_matching(model, optim):
 
         else:
             optim.zero_grad()
-            x_i = x[i].cuda()
-            y_i = y[i].cuda()
+            x_i = x[i].to(device)
+            y_i = y[i].to(device)
             z_i = model(x_i, c=y_i, recurrent=True)
             log_jac = model.log_jacobian(run_forward=False)
             loss = torch.mean(
@@ -129,8 +131,8 @@ def train_signals_recurrent(model, optim):
             end = config.batch_size
             for j in range(len(x[i])//config.batch_size):
                 optim.zero_grad()
-                x_i = x[i][beg:end].cuda()
-                y_i = y[i][beg:end].cuda()
+                x_i = x[i][beg:end].to(device)
+                y_i = y[i][beg:end].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -143,8 +145,8 @@ def train_signals_recurrent(model, optim):
                 end += config.batch_size
             if (len(x[i])//config.batch_size) * config.batch_size != len(x[i]):
                 optim.zero_grad()
-                x_i = x[i][beg:].cuda()
-                y_i = y[i][beg:].cuda()
+                x_i = x[i][beg:].to(device)
+                y_i = y[i][beg:].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -156,8 +158,8 @@ def train_signals_recurrent(model, optim):
 
         else:
             optim.zero_grad()
-            x_i = x[i].cuda()
-            y_i = y[i].cuda()
+            x_i = x[i].to(device)
+            y_i = y[i].to(device)
             z_i = model(x_i, c=y_i, recurrent=True)
             log_jac = model.log_jacobian(run_forward=False)
             loss = torch.mean(
@@ -175,8 +177,8 @@ def train_signals(model, optim):
     l_tot = 0
     x, y = datagen.get_signals_batch(config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -194,8 +196,8 @@ def train_signals_matching(model, optim):
     x, y = datagen.get_signals_matching_batch(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -213,8 +215,8 @@ def train_signals_sequence(model, optim):
     x, y = datagen.get_signals_sequence_batch(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -232,8 +234,8 @@ def train_matching_old(model, optim):
     x, y = datagen.generate_matching_batch_old(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -251,8 +253,8 @@ def train_seq_old(model, optim):
     x, y = datagen.generate_seq_batch_old(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -270,8 +272,8 @@ def train_cINN_old(model, optim):
     x, y = datagen.generate_cINN_batch_old(
         config.batch_size * config.n_iterations)
     for i in range(0, len(x), config.batch_size):
-        x_i = x[i:i+config.batch_size].cuda()
-        y_i = y[i:i+config.batch_size].cuda()
+        x_i = x[i:i+config.batch_size].to(device)
+        y_i = y[i:i+config.batch_size].to(device)
         optim.zero_grad()
         z_i = model(x_i, c=y_i)
         log_jac = model.log_jacobian(run_forward=False)
@@ -295,8 +297,8 @@ def train_rcINN_matching_old(model, optim):
             end = config.batch_size
             for j in range(len(x[i])//config.batch_size):
                 optim.zero_grad()
-                x_i = x[i][beg:end].cuda()
-                y_i = y[i][beg:end].cuda()
+                x_i = x[i][beg:end].to(device)
+                y_i = y[i][beg:end].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -309,8 +311,8 @@ def train_rcINN_matching_old(model, optim):
                 end += config.batch_size
             if (len(x[i])//config.batch_size) * config.batch_size != len(x[i]):
                 optim.zero_grad()
-                x_i = x[i][beg:].cuda()
-                y_i = y[i][beg:].cuda()
+                x_i = x[i][beg:].to(device)
+                y_i = y[i][beg:].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -322,8 +324,8 @@ def train_rcINN_matching_old(model, optim):
 
         else:
             optim.zero_grad()
-            x_i = x[i].cuda()
-            y_i = y[i].cuda()
+            x_i = x[i].to(device)
+            y_i = y[i].to(device)
             z_i = model(x_i, c=y_i, recurrent=True)
             log_jac = model.log_jacobian(run_forward=False)
             loss = torch.mean(
@@ -348,8 +350,8 @@ def train_rcINN_old(model, optim):
             end = config.batch_size
             for j in range(len(x[i])//config.batch_size):
                 optim.zero_grad()
-                x_i = x[i][beg:end].cuda()
-                y_i = y[i][beg:end].cuda()
+                x_i = x[i][beg:end].to(device)
+                y_i = y[i][beg:end].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -362,8 +364,8 @@ def train_rcINN_old(model, optim):
                 end += config.batch_size
             if (len(x[i])//config.batch_size) * config.batch_size != len(x[i]):
                 optim.zero_grad()
-                x_i = x[i][beg:].cuda()
-                y_i = y[i][beg:].cuda()
+                x_i = x[i][beg:].to(device)
+                y_i = y[i][beg:].to(device)
                 z_i = model(x_i, c=y_i, recurrent=True)
                 log_jac = model.log_jacobian(run_forward=False)
                 loss = torch.mean(
@@ -375,8 +377,8 @@ def train_rcINN_old(model, optim):
 
         else:
             optim.zero_grad()
-            x_i = x[i].cuda()
-            y_i = y[i].cuda()
+            x_i = x[i].to(device)
+            y_i = y[i].to(device)
             z_i = model(x_i, c=y_i, recurrent=True)
             log_jac = model.log_jacobian(run_forward=False)
             loss = torch.mean(
@@ -866,8 +868,8 @@ def get_outputs_signals_recurrent_matching(true_stats, mp=True):
             y_seq = torch.tensor(y_seq, dtype=torch.float32)
             z_seq = torch.tensor(z_seq, dtype=torch.float32)
 
-            y_seq = y_seq.cuda()
-            z_seq = z_seq.cuda()
+            y_seq = y_seq.to(device)
+            z_seq = z_seq.to(device)
 
             output_seq = model_seq(z_seq, c=y_seq, rev=True)
             output_seq = output_seq.cpu().detach()
@@ -905,8 +907,8 @@ def get_outputs_signals_recurrent_matching(true_stats, mp=True):
             y_matching = torch.tensor(y_matching, dtype=torch.float32)
             z_matching = torch.tensor(z_matching, dtype=torch.float32)
 
-            y_matching = y_matching.cuda()
-            z_matching = z_matching.cuda()
+            y_matching = y_matching.to(device)
+            z_matching = z_matching.to(device)
 
             output_matching = model_matching(
                 z_matching, c=y_matching, rev=True)
@@ -993,8 +995,8 @@ def get_outputs_signals_recurrent_matching(true_stats, mp=True):
             big_output = []
 
             for i in range(len(y_rcINN)):
-                y_rcINN[i] = y_rcINN[i].cuda()
-                z_rcINN[i] = z_rcINN[i].cuda()
+                y_rcINN[i] = y_rcINN[i].to(device)
+                z_rcINN[i] = z_rcINN[i].to(device)
 
                 output_rcINN = model_rcINN(
                     z_rcINN[i], c=y_rcINN[i], rev=True, recurrent=True)
@@ -1105,8 +1107,8 @@ def get_outputs_signals_recurrent(true_stats):
             y_seq = torch.tensor(y_seq, dtype=torch.float32)
             z_seq = torch.tensor(z_seq, dtype=torch.float32)
 
-            y_seq = y_seq.cuda()
-            z_seq = z_seq.cuda()
+            y_seq = y_seq.to(device)
+            z_seq = z_seq.to(device)
 
             output_seq = model_seq(z_seq, c=y_seq, rev=True)
             output_seq = output_seq.cpu().detach()
@@ -1147,8 +1149,8 @@ def get_outputs_signals_recurrent(true_stats):
                 y_array = torch.tensor(y_array, dtype=torch.float32)
                 z_array = torch.tensor(z_array, dtype=torch.float32)
 
-                y_array = y_array.cuda()
-                z_array = z_array.cuda()
+                y_array = y_array.to(device)
+                z_array = z_array.to(device)
 
                 output = model_rcINN(z_array, c=y_array,
                                      rev=True, recurrent=True)
@@ -1250,8 +1252,8 @@ def get_outputs_signals(true_stats):
             y_array = torch.tensor(y_array, dtype=torch.float32)
             z_array = torch.tensor(z_array, dtype=torch.float32)
 
-            y_array = y_array.cuda()
-            z_array = z_array.cuda()
+            y_array = y_array.to(device)
+            z_array = z_array.to(device)
 
             big_output = model(z_array, c=y_array, rev=True)
             big_output = big_output.cpu().detach()
@@ -1483,8 +1485,8 @@ def get_outputs_splitter(true_stats, splitter_type):
             y_array = torch.tensor(y_array, dtype=torch.float32)
             z_array = torch.tensor(z_array, dtype=torch.float32)
 
-            y_array = y_array.cuda()
-            z_array = z_array.cuda()
+            y_array = y_array.to(device)
+            z_array = z_array.to(device)
 
             big_output = model(z_array, c=y_array, rev=True)
             big_output = big_output.cpu().detach()
@@ -1521,8 +1523,8 @@ def get_outputs_bp(true_stats):
             y_array = torch.tensor(y_array, dtype=torch.float32)
             z_array = torch.tensor(z_array, dtype=torch.float32)
 
-            y_array = y_array.cuda()
-            z_array = z_array.cuda()
+            y_array = y_array.to(device)
+            z_array = z_array.to(device)
 
             big_output = model(z_array, c=y_array, rev=True)
             big_output = big_output.cpu().detach()
@@ -1633,8 +1635,8 @@ def get_outputs_bp_recurrent(true_stats):
             y_seq = torch.tensor(y_seq, dtype=torch.float32)
             z_seq = torch.tensor(z_seq, dtype=torch.float32)
 
-            y_seq = y_seq.cuda()
-            z_seq = z_seq.cuda()
+            y_seq = y_seq.to(device)
+            z_seq = z_seq.to(device)
 
             output_seq = model_seq(z_seq, c=y_seq, rev=True)
             output_seq = output_seq.cpu().detach()
@@ -1675,8 +1677,8 @@ def get_outputs_bp_recurrent(true_stats):
                 y_array = torch.tensor(y_array, dtype=torch.float32)
                 z_array = torch.tensor(z_array, dtype=torch.float32)
 
-                y_array = y_array.cuda()
-                z_array = z_array.cuda()
+                y_array = y_array.to(device)
+                z_array = z_array.to(device)
 
                 output = model_rcINN(z_array, c=y_array,
                                      rev=True, recurrent=True)
@@ -1759,8 +1761,8 @@ def get_outputs_bp_recurrent_matching(true_stats, mp=True):
             y_seq = torch.tensor(y_seq, dtype=torch.float32)
             z_seq = torch.tensor(z_seq, dtype=torch.float32)
 
-            y_seq = y_seq.cuda()
-            z_seq = z_seq.cuda()
+            y_seq = y_seq.to(device)
+            z_seq = z_seq.to(device)
 
             output_seq = model_seq(z_seq, c=y_seq, rev=True)
             output_seq = output_seq.cpu().detach()
@@ -1798,8 +1800,8 @@ def get_outputs_bp_recurrent_matching(true_stats, mp=True):
             y_matching = torch.tensor(y_matching, dtype=torch.float32)
             z_matching = torch.tensor(z_matching, dtype=torch.float32)
 
-            y_matching = y_matching.cuda()
-            z_matching = z_matching.cuda()
+            y_matching = y_matching.to(device)
+            z_matching = z_matching.to(device)
 
             output_matching = model_matching(
                 z_matching, c=y_matching, rev=True)
@@ -1880,8 +1882,8 @@ def get_outputs_bp_recurrent_matching(true_stats, mp=True):
             big_output = []
 
             for i in range(len(y_rcINN)):
-                y_rcINN[i] = y_rcINN[i].cuda()
-                z_rcINN[i] = z_rcINN[i].cuda()
+                y_rcINN[i] = y_rcINN[i].to(device)
+                z_rcINN[i] = z_rcINN[i].to(device)
 
                 output_rcINN = model_rcINN(
                     z_rcINN[i], c=y_rcINN[i], rev=True, recurrent=True)

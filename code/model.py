@@ -6,6 +6,7 @@ import torch.nn as nn
 
 import config
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def subnet_fc(dims_in, dims_out):
     return nn.Sequential(nn.Linear(dims_in, config.n_hidden_layer_size),
@@ -54,12 +55,12 @@ def generate_cINN_old():
 
     nodes.append(Ff.OutputNode(nodes[-1], name='output'))
     model = Ff.ReversibleGraphNet(nodes + [cond])
-    model.cuda()
+    model.to(device)
 
     params_trainable = list(
         filter(lambda p: p.requires_grad, model.parameters()))
     for p in params_trainable:
-        p.data = config.init_scale * torch.randn_like(p).cuda()
+        p.data = config.init_scale * torch.randn_like(p).to(device)
 
     gamma = config.gamma
     optim = torch.optim.AdamW(params_trainable, lr=config.lr)
@@ -87,12 +88,12 @@ def generate_rcINN_old():
 
     nodes.append(Ff.OutputNode(nodes[-1], name='output'))
     model = Ff.ReversibleGraphNet(nodes + [cond])
-    model.cuda()
+    model.to(device)
 
     params_trainable = list(
         filter(lambda p: p.requires_grad, model.parameters()))
     for p in params_trainable:
-        p.data = config.init_scale * torch.randn_like(p).cuda()
+        p.data = config.init_scale * torch.randn_like(p).to(device)
 
     gamma = config.gamma
     optim = torch.optim.AdamW(params_trainable, lr=config.lr)
