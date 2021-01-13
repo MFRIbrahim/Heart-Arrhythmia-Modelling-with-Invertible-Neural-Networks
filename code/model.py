@@ -109,7 +109,7 @@ def save(name, optim, model):
 
 
 def load(name, optim, model):
-    state_dicts = torch.load(name)
+    state_dicts = torch.load(name, map_location=device)
     model.load_state_dict(state_dicts['net'])
     try:
         optim.load_state_dict(state_dicts['opt'])
